@@ -1,23 +1,25 @@
-import { useState } from 'react';
+import { memo, useRef, useCallback } from 'react';
 
 const TodoForm = ({ onAdd }) => {
-    const [text, setText] = useState('');
+    const inputRef = useRef(null);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = useCallback(
+        (e) => {
+            e.preventDefault();
+            const value = inputRef.current.value.trim();
+            if (!value) return;
 
-        if (!text.trim()) return;
-
-        onAdd(text);
-        setText('');
-    };
+            onAdd(value);
+            inputRef.current.value = '';
+        },
+        [onAdd],
+    );
 
     return (
         <form onSubmit={handleSubmit} className="flex mb-5">
             <input
                 type="text"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
+                ref={inputRef}
                 placeholder="새로운 할 일을 입력하세요"
                 className="flex-1 p-2.5 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -31,4 +33,4 @@ const TodoForm = ({ onAdd }) => {
     );
 };
 
-export default TodoForm;
+export default memo(TodoForm);

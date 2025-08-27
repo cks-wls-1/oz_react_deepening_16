@@ -1,33 +1,32 @@
+import { memo, useCallback } from 'react';
+
 const TodoFilter = ({ filter, onFilterChange }) => {
+    // 버튼 클릭 핸들러를 useCallback으로 감싸서 메모이제이션
+    const handleClick = useCallback((value) => () => onFilterChange(value), [onFilterChange]);
+
+    const filters = [
+        { key: 'all', label: '전체' },
+        { key: 'active', label: '활성' },
+        { key: 'completed', label: '완료' },
+    ];
+
     return (
         <div className="my-5 p-2.5 bg-gray-100 rounded">
             <span className="mr-2">필터: </span>
-            <button
-                onClick={() => onFilterChange('all')}
-                className={`mr-1.5 px-2.5 py-1.5 rounded border-none ${
-                    filter === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'
-                }`}
-            >
-                전체
-            </button>
-            <button
-                onClick={() => onFilterChange('active')}
-                className={`mr-1.5 px-2.5 py-1.5 rounded border-none ${
-                    filter === 'active' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'
-                }`}
-            >
-                활성
-            </button>
-            <button
-                onClick={() => onFilterChange('completed')}
-                className={`px-2.5 py-1.5 rounded border-none ${
-                    filter === 'completed' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'
-                }`}
-            >
-                완료
-            </button>
+            {filters.map(({ key, label }) => (
+                <button
+                    key={key}
+                    onClick={handleClick(key)}
+                    className={`mr-1.5 px-2.5 py-1.5 rounded border-none ${
+                        filter === key ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'
+                    }`}
+                >
+                    {label}
+                </button>
+            ))}
         </div>
     );
 };
 
-export default TodoFilter;
+// React.memo로 부모 리렌더링에도 불필요한 재렌더링 방지
+export default memo(TodoFilter);
